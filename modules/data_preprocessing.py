@@ -46,7 +46,7 @@ def preprocess_data(df):
                 data[col].fillna(data[col].mode()[0], inplace=True)
     
     # Create a new feature for car age (current year - car year)
-    current_year = 2023  # You can update this or get dynamically
+    current_year = 2025  # Current year
     if 'Year' in data.columns:
         data['Car_Age'] = current_year - data['Year']
         st.write("Created new feature: Car_Age = Current Year - Year")
@@ -71,7 +71,7 @@ def preprocess_data(df):
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', StandardScaler(), numerical_features),
-            ('cat', OneHotEncoder(drop='first', sparse=False, handle_unknown='ignore'), categorical_features)
+            ('cat', OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore'), categorical_features)
         ],
         remainder='drop'
     )

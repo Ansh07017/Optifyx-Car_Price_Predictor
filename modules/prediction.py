@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 def predict_price(models, df, categorical_features, numerical_features, feature_names):
@@ -97,7 +98,7 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
             )
             
             # Calculate Car_Age automatically
-            current_year = 2023
+            current_year = 2025
             if 'Car_Age' in numerical_features:
                 num_input_values['Car_Age'] = current_year - num_input_values['Year']
                 st.write(f"Car Age: {num_input_values['Car_Age']} years")
@@ -116,7 +117,7 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
         scaled_numerical = scaler.transform(input_data[numerical_features])
         
         # One-hot encode categorical features
-        encoder = OneHotEncoder(drop='first', sparse=False, handle_unknown='ignore')
+        encoder = OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore')
         if len(categorical_features) > 0:  # Only encode if we have categorical features
             encoder.fit(df[categorical_features])
             encoded_categorical = encoder.transform(input_data[categorical_features])
