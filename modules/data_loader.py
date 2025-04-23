@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
-from modules.database import create_tables, insert_car_data, get_car_data
+from modules.database import create_tables, insert_car_data, get_car_data, get_column_descriptions
 
 @st.cache_data
 def load_data():

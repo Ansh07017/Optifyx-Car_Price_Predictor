@@ -181,23 +181,3 @@ def get_column_descriptions():
         'Owner': 'Number of previous owners before the current seller (0 = first-hand)',
         'Car_Age': 'Age of the car calculated as (Current Year - Year of Manufacture)'
     }
-
-def get_column_descriptions():
-    """
-    Returns a dictionary with column descriptions
-    
-    Returns:
-        dict: Dictionary mapping column names to their descriptions
-    """
-    return {
-        'Car_Name': 'Name/model of the car',
-        'Year': 'Year of manufacture',
-        'Selling_Price': 'Price at which the car is being sold (in lakhs INR)',
-        'Present_Price': 'Current market price of the car when new (in lakhs INR)',
-        'Driven_kms': 'Total kilometers the car has been driven',
-        'Fuel_Type': 'Type of fuel the car uses (e.g., Petrol, Diesel, CNG)',
-        'Selling_type': 'Who is selling the car — Dealer or Individual',
-        'Transmission': 'Type of transmission — Manual or Automatic',
-        'Owner': 'Number of previous owners before the current seller (0 = first-hand)',
-        'Car_Age': 'Age of the car calculated as (Current Year - Year of Manufacture)'
-    }

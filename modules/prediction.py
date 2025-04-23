@@ -15,17 +15,10 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
         numerical_features (list): List of numerical feature names
         feature_names (list): List of all feature names after preprocessing
     """
-    st.write("## Car Price Prediction")
     
     if not models:
         st.warning("No models available for prediction. Please train at least one model.")
         return
-    
-    # Provide information about the prediction tool
-    st.write("""
-    This tool allows you to predict the selling price of a car based on various features.
-    Adjust the values below to get a price prediction.
-    """)
     
     # Select the model to use for prediction
     model_names = list(models.keys())
@@ -130,17 +123,38 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
         # Make prediction
         prediction = selected_model.predict(input_features)[0]
         
-        # Display the prediction
-        st.write("## Predicted Car Price")
-        st.write(f"### ₹ {prediction:.2f} Lakhs")
+        # Display the prediction with better styling
+        st.markdown("""
+        <style>
+        .big-font {
+            font-size:50px !important;
+            font-weight:bold;
+            color:#0068c9;
+        }
+        .prediction-box {
+            background-color:#f0f2f6;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
+        st.write("## 💰 Predicted Car Price")
+        st.markdown(f'<p class="big-font">₹ {prediction:.2f} Lakhs</p>', unsafe_allow_html=True)
+        
+        # Add model confidence information
+        st.write(f"**Based on:** {selected_model_name} prediction")
         
         # Provide interpretation guidelines
-        st.write("#### Interpretation")
-        st.write("""
-        - The predicted price is in lakhs of Indian Rupees (1 lakh = 100,000).
-        - This prediction is based on the patterns learned from historical data.
-        - Actual prices may vary due to factors not captured in the model.
+        st.info("""
+        📌 **What this means:**
+        • 1 lakh = 100,000 Indian Rupees
+        • This prediction uses real market data patterns
+        • Local market conditions may cause price variations
         """)
+        st.markdown('</div>', unsafe_allow_html=True)
         
         # Add feature impact if using a tree-based model
         if selected_model_name in ['Random Forest', 'Gradient Boosting', 'Decision Tree']:

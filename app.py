@@ -28,11 +28,40 @@ st.set_page_config(
 st.title("🚗 Car Price Prediction Application")
 st.subheader("Predict car prices using machine learning models")
 
-# Create sidebar for navigation
-st.sidebar.title("Navigation")
+# Add custom CSS for the sidebar
+st.markdown("""
+<style>
+    .sidebar .sidebar-content {
+        background-color: #f8f9fa;
+    }
+    .sidebar-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #0068c9;
+    }
+    .menu-item {
+        margin-bottom: 5px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Create sidebar for navigation with icons
+st.sidebar.markdown('<div class="sidebar-title">🚗 Car Price Predictor</div>', unsafe_allow_html=True)
+
+# Create menu options with icons
+menu_options = {
+    "Price Prediction": "💰",
+    "Data Exploration": "📊",
+    "Model Training": "⚙️",
+    "Data Overview": "📋"
+}
+
+# Use radio buttons for page selection
 page = st.sidebar.radio(
-    "Select a page:",
-    ["Price Prediction", "Data Exploration", "Model Training", "Data Overview"]
+    "Navigation",
+    list(menu_options.keys()),
+    format_func=lambda x: f"{menu_options[x]} {x}"
 )
 
 # Load data
@@ -40,29 +69,43 @@ try:
     df = load_data()
     
     if page == "Price Prediction":
-        st.write("## Predict Car Prices")
+        st.write("# 🚗 Car Price Prediction")
         st.write("""
-        Use this tool to predict car prices based on various features. 
-        Simply select the car details below and our machine learning model will estimate the selling price.
+        Instantly estimate the selling price of your car based on its specifications.
+        Simply adjust the parameters below and get an accurate price prediction.
         """)
         
-        # Show column descriptions in an expander
-        with st.expander("📋 **Column Descriptions**", expanded=False):
-            show_column_descriptions()
+        # Create a cleaner layout using columns
+        col1, col2 = st.columns([2, 1])
         
-        # Preprocess data
-        X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
+        with col2:
+            st.image("https://img.icons8.com/fluency/96/000000/car.png", width=80)
+            
+            # Show column descriptions in an expander
+            with st.expander("ℹ️ **What Do These Features Mean?**", expanded=False):
+                show_column_descriptions()
+                
+            st.write("#### Why Trust This Model?")
+            st.write("""
+            - Trained on real market data
+            - Uses multiple advanced ML algorithms
+            - Considers all important car factors
+            """)
         
-        # Split the data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        
-        # Train models
-        models = train_models(X_train, y_train, feature_names)
-        
-        # Predict price
-        predict_price(models, df, categorical_features, numerical_features, feature_names)
+        with col1:
+            # Preprocess data
+            X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
+            
+            # Split the data
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.2, random_state=42
+            )
+            
+            # Train models
+            models = train_models(X_train, y_train, feature_names)
+            
+            # Predict price
+            predict_price(models, df, categorical_features, numerical_features, feature_names)
     
     elif page == "Data Exploration":
         perform_eda(df)
