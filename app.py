@@ -93,18 +93,21 @@ try:
             """)
         
         with col1:
-            # Preprocess data
-            X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
+            # Get the preprocessed data and models once at the beginning
+            # This is done in the background without showing preprocessing details
+            with st.spinner("Loading prediction models..."):
+                # Preprocess data silently
+                X, y, feature_names, categorical_features, numerical_features = preprocess_data(df, show_details=False)
+                
+                # Split the data
+                X_train, X_test, y_train, y_test = train_test_split(
+                    X, y, test_size=0.2, random_state=42
+                )
+                
+                # Train models silently
+                models = train_models(X_train, y_train, feature_names, show_details=False)
             
-            # Split the data
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=0.2, random_state=42
-            )
-            
-            # Train models
-            models = train_models(X_train, y_train, feature_names)
-            
-            # Predict price
+            # Show only the prediction interface to the user
             predict_price(models, df, categorical_features, numerical_features, feature_names)
     
     elif page == "Data Exploration":

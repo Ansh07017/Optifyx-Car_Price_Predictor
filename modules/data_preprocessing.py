@@ -5,12 +5,13 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
-def preprocess_data(df):
+def preprocess_data(df, show_details=True):
     """
     Preprocess the car dataset for model training
     
     Args:
         df (pandas.DataFrame): The raw car dataset
+        show_details (bool): Whether to display preprocessing details in the UI
         
     Returns:
         tuple: Preprocessed features (X), target (y), feature names, categorical and numerical features
@@ -18,20 +19,24 @@ def preprocess_data(df):
     # Make a copy of the dataframe to avoid modifying the original
     data = df.copy()
     
-    # Display preprocessing steps
-    st.write("## Data Preprocessing")
+    # Display preprocessing steps if show_details is True
+    if show_details:
+        st.write("## Data Preprocessing")
     
     # Remove duplicates if any
     initial_rows = data.shape[0]
     data.drop_duplicates(inplace=True)
     removed_dups = initial_rows - data.shape[0]
-    st.write(f"Removed {removed_dups} duplicate rows")
+    
+    if show_details:
+        st.write(f"Removed {removed_dups} duplicate rows")
     
     # Handle missing values if any
     missing_values = data.isnull().sum()
     if missing_values.sum() > 0:
-        st.write("Handling missing values:")
-        st.write(missing_values[missing_values > 0])
+        if show_details:
+            st.write("Handling missing values:")
+            st.write(missing_values[missing_values > 0])
         
         # For numerical columns, fill with median
         num_cols = data.select_dtypes(include=['number']).columns
@@ -49,7 +54,8 @@ def preprocess_data(df):
     current_year = 2025  # Current year
     if 'Year' in data.columns:
         data['Car_Age'] = current_year - data['Year']
-        st.write("Created new feature: Car_Age = Current Year - Year")
+        if show_details:
+            st.write("Created new feature: Car_Age = Current Year - Year")
     
     # Identify target variable
     target_col = 'Selling_Price'
@@ -62,10 +68,11 @@ def preprocess_data(df):
     categorical_features = X.select_dtypes(include=['object']).columns.tolist()
     numerical_features = X.select_dtypes(include=['number']).columns.tolist()
     
-    # Display feature information
-    st.write(f"Target variable: {target_col}")
-    st.write(f"Categorical features: {categorical_features}")
-    st.write(f"Numerical features: {numerical_features}")
+    # Display feature information only if show_details is True
+    if show_details:
+        st.write(f"Target variable: {target_col}")
+        st.write(f"Categorical features: {categorical_features}")
+        st.write(f"Numerical features: {numerical_features}")
     
     # Create preprocessing pipeline
     preprocessor = ColumnTransformer(
@@ -88,6 +95,7 @@ def preprocess_data(df):
         
     feature_names = numerical_features + encoded_cat_features
     
-    st.write(f"After preprocessing, we have {X_processed.shape[1]} features")
+    if show_details:
+        st.write(f"After preprocessing, we have {X_processed.shape[1]} features")
     
     return X_processed, y, feature_names, categorical_features, numerical_features
