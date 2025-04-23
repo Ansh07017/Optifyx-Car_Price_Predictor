@@ -8,12 +8,13 @@ from sklearn.model_selection import train_test_split
 import os
 
 # Import custom modules
-from modules.data_loader import load_data
+from modules.data_loader import load_data, show_column_descriptions
 from modules.data_preprocessing import preprocess_data
 from modules.eda import perform_eda
 from modules.model_training import train_models
 from modules.model_evaluation import evaluate_models
 from modules.prediction import predict_price
+from modules.database import create_tables
 
 # Set page configuration
 st.set_page_config(
@@ -31,14 +32,57 @@ st.subheader("Predict car prices using machine learning models")
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Select a page:",
-    ["Home", "Data Exploration", "Model Training", "Price Prediction"]
+    ["Price Prediction", "Data Exploration", "Model Training", "Data Overview"]
 )
 
 # Load data
 try:
     df = load_data()
     
-    if page == "Home":
+    if page == "Price Prediction":
+        st.write("## Predict Car Prices")
+        st.write("""
+        Use this tool to predict car prices based on various features. 
+        Simply select the car details below and our machine learning model will estimate the selling price.
+        """)
+        
+        # Show column descriptions in an expander
+        with st.expander("📋 **Column Descriptions**", expanded=False):
+            show_column_descriptions()
+        
+        # Preprocess data
+        X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
+        
+        # Split the data
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+        
+        # Train models
+        models = train_models(X_train, y_train, feature_names)
+        
+        # Predict price
+        predict_price(models, df, categorical_features, numerical_features, feature_names)
+    
+    elif page == "Data Exploration":
+        perform_eda(df)
+        
+    elif page == "Model Training":
+        # Preprocess data
+        X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
+        
+        # Split the data
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+        
+        # Train models
+        models = train_models(X_train, y_train, feature_names)
+        
+        # Evaluate models
+        evaluate_models(models, X_test, y_test, X_train, y_train, feature_names)
+        
+    elif page == "Data Overview":
         st.write("## Welcome to the Car Price Prediction App")
         st.write("""
         This application allows you to explore car data, train machine learning models, 
@@ -82,39 +126,6 @@ try:
         plt.ylabel('Frequency')
         plt.title('Distribution of Car Selling Prices')
         st.pyplot(fig)
-        
-    elif page == "Data Exploration":
-        perform_eda(df)
-        
-    elif page == "Model Training":
-        # Preprocess data
-        X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
-        
-        # Split the data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        
-        # Train models
-        models = train_models(X_train, y_train, feature_names)
-        
-        # Evaluate models
-        evaluate_models(models, X_test, y_test, X_train, y_train, feature_names)
-        
-    elif page == "Price Prediction":
-        # Preprocess data
-        X, y, feature_names, categorical_features, numerical_features = preprocess_data(df)
-        
-        # Split the data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        
-        # Train models
-        models = train_models(X_train, y_train, feature_names)
-        
-        # Predict price
-        predict_price(models, df, categorical_features, numerical_features, feature_names)
         
 except Exception as e:
     st.error(f"An error occurred: {e}")
