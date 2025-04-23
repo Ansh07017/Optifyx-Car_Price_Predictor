@@ -20,13 +20,25 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
         st.warning("No models available for prediction. Please train at least one model.")
         return
     
-    # Select the model to use for prediction
+    # Select the model to use for prediction with better styling
+    st.markdown("""
+    <div class="card">
+        <h3>🤖 Select Prediction Model</h3>
+    """, unsafe_allow_html=True)
+    
     model_names = list(models.keys())
-    selected_model_name = st.selectbox("Select model for prediction:", model_names)
+    selected_model_name = st.selectbox("Choose a machine learning model:", model_names)
     selected_model = models[selected_model_name]['model']
     
-    # Create the input form
-    st.write("### Enter Car Details")
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Create the input form with styling
+    st.markdown("""
+    <div class="card">
+        <h3>🚗 Enter Car Details</h3>
+        <p>Adjust the parameters below to match your car's specifications</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
