@@ -66,7 +66,7 @@ try:
         current_year = 2025  # Replace with the current year dynamically if needed
         if 'Year' in df.columns:
             df['Car_Age'] = current_year - df['Year']
-            df = df.drop(columns=['Year'])  # Drop 'Year' if no longer needed
+            # Keep both Year and Car_Age columns
         else:
             raise KeyError(
                 "The dataset is missing the 'Year' column required to calculate 'Car_Age'."
