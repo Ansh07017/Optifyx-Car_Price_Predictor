@@ -104,9 +104,9 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
             
             # Calculate Car_Age automatically
             current_year = 2025
-            if 'Car_Age' in numerical_features:
-                num_input_values['Car_Age'] = current_year - num_input_values['Year']
-                st.write(f"Car Age: {num_input_values['Car_Age']} years")
+            # Always calculate Car_Age for prediction
+            num_input_values['Car_Age'] = current_year - num_input_values['Year']
+            st.write(f"Car Age: {num_input_values['Car_Age']} years")
     
     # Create a prediction button
     predict_button = st.button("Predict Price")
@@ -114,6 +114,18 @@ def predict_price(models, df, categorical_features, numerical_features, feature_
     if predict_button:
         # Create a DataFrame with the input values
         input_data = pd.DataFrame({**cat_input_values, **num_input_values}, index=[0])
+        
+        # Add Car_Age column if it doesn't exist in input_data but is needed for prediction
+        if 'Car_Age' not in input_data.columns and 'Car_Age' in numerical_features:
+            current_year = 2025
+            input_data['Car_Age'] = current_year - input_data['Year']
+        
+        # Make sure all required numerical features are in the input data
+        missing_features = [feature for feature in numerical_features if feature not in input_data.columns]
+        if missing_features:
+            st.warning(f"Adding missing features: {missing_features}")
+            for feature in missing_features:
+                input_data[feature] = 0  # Use default value
         
         # Preprocess the input data
         # Standardize numerical features

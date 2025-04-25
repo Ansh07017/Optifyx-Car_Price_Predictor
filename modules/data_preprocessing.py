@@ -53,12 +53,24 @@ def preprocess_data(df, show_details=True):
     # Create a new feature for car age (current year - car year)
     current_year = 2025  # Current year
     if 'Year' in data.columns:
-        data['Car_Age'] = current_year - data['Year']
-        if show_details:
-            st.write("Created new feature: Car_Age = Current Year - Year")
+        # Create the Car_Age column if it doesn't exist
+        if 'Car_Age' not in data.columns:
+            data['Car_Age'] = current_year - data['Year']
+            if show_details:
+                st.write("Created new feature: Car_Age = Current Year - Year")
     
-    # Identify target variable
-    target_col = 'Selling_Price'
+    # Ensure column names are consistently formatted
+    # Based on the dataset image, columns might have different formatting
+    if 'Selling_Price' in data.columns:
+        target_col = 'Selling_Price'
+    elif 'Selling_Pri' in data.columns:  # From the image you shared
+        target_col = 'Selling_Pri'
+        # Rename for consistency
+        data = data.rename(columns={'Selling_Pri': 'Selling_Price'})
+    else:
+        # Default target column if none of the expected columns are found
+        st.error("Could not find the target column 'Selling_Price' or 'Selling_Pri' in the dataset.")
+        target_col = 'Selling_Price'  # Default value to avoid errors
     
     # Separate features and target
     X = data.drop(target_col, axis=1)
@@ -67,6 +79,10 @@ def preprocess_data(df, show_details=True):
     # Identify categorical and numerical features
     categorical_features = X.select_dtypes(include=['object']).columns.tolist()
     numerical_features = X.select_dtypes(include=['number']).columns.tolist()
+    
+    # Make sure Car_Age is in numerical_features if it exists
+    if 'Car_Age' in X.columns and 'Car_Age' not in numerical_features:
+        numerical_features.append('Car_Age')
     
     # Display feature information only if show_details is True
     if show_details:

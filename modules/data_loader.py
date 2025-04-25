@@ -17,6 +17,29 @@ def load_data():
         if os.path.exists(file_path):
             # Load the dataset
             df = pd.read_csv(file_path)
+            
+            # Map column names to be consistent based on the image shared
+            column_mapping = {
+                'Car_Name': 'Car_Name',
+                'Year': 'Year',
+                'Selling_Price': 'Selling_Price',
+                'Selling_Pri': 'Selling_Price',
+                'Present_Price': 'Present_Price',
+                'Present_Pri': 'Present_Price',
+                'Driven_kms': 'Driven_kms',
+                'Driven_km': 'Driven_kms',
+                'Fuel_Type': 'Fuel_Type',
+                'Selling_type': 'Selling_type',
+                'Transmission': 'Transmission',
+                'Transmissi': 'Transmission',
+                'Owner': 'Owner'
+            }
+            
+            # Rename columns that exist in the dataframe
+            for old_col, new_col in column_mapping.items():
+                if old_col in df.columns:
+                    df = df.rename(columns={old_col: new_col})
+            
             st.success("Data loaded from CSV file successfully")
             return df
         
@@ -24,6 +47,29 @@ def load_data():
         file_path = "car data.csv"
         if os.path.exists(file_path):
             df = pd.read_csv(file_path)
+            
+            # Apply the same column mapping for consistency
+            column_mapping = {
+                'Car_Name': 'Car_Name',
+                'Year': 'Year',
+                'Selling_Price': 'Selling_Price',
+                'Selling_Pri': 'Selling_Price',
+                'Present_Price': 'Present_Price',
+                'Present_Pri': 'Present_Price',
+                'Driven_kms': 'Driven_kms',
+                'Driven_km': 'Driven_kms',
+                'Fuel_Type': 'Fuel_Type',
+                'Selling_type': 'Selling_type',
+                'Transmission': 'Transmission',
+                'Transmissi': 'Transmission',
+                'Owner': 'Owner'
+            }
+            
+            # Rename columns that exist in the dataframe
+            for old_col, new_col in column_mapping.items():
+                if old_col in df.columns:
+                    df = df.rename(columns={old_col: new_col})
+                    
             st.success("Data loaded from CSV file successfully")
             return df
         
