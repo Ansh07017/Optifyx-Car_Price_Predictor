@@ -1,56 +1,34 @@
 import streamlit as st
 import pandas as pd
 import os
-from modules.database import create_tables, insert_car_data, get_car_data, get_column_descriptions
 
 @st.cache_data
 def load_data():
     """
-    Load the car dataset from file and store in database
+    Load the car dataset from CSV file
     
     Returns:
         pandas.DataFrame: The loaded car dataset
     """
     try:
-        # First, try to get data from database
-        db_data = get_car_data()
-        
-        if db_data is not None and not db_data.empty:
-            st.success("Data loaded from database successfully")
-            return db_data
-        
-        # If database is empty, load from CSV and store in database
-        # Attempt to read from the attached assets directory
+        # Check if the file exists in attached_assets directory
         file_path = "attached_assets/car data.csv"
         
-        # Check if the file exists
         if os.path.exists(file_path):
             # Load the dataset
             df = pd.read_csv(file_path)
-            
-            # Create database tables if they don't exist
-            create_tables()
-            
-            # Store data in database
-            insert_car_data(df)
-            
+            st.success("Data loaded from CSV file successfully")
             return df
-        else:
-            # If file doesn't exist in attached_assets, try the current directory
-            file_path = "car data.csv"
-            if os.path.exists(file_path):
-                df = pd.read_csv(file_path)
-                
-                # Create database tables if they don't exist
-                create_tables()
-                
-                # Store data in database
-                insert_car_data(df)
-                
-                return df
-            else:
-                raise FileNotFoundError(f"Car dataset file not found in attached_assets or current directory")
-    
+        
+        # If not in attached_assets, try current directory
+        file_path = "car data.csv"
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            st.success("Data loaded from CSV file successfully")
+            return df
+        
+        # If we get here, no data source was found
+        raise FileNotFoundError("Car dataset file not found in attached_assets or current directory")
     except Exception as e:
         st.error(f"Error loading data: {e}")
         raise e
@@ -59,7 +37,19 @@ def show_column_descriptions():
     """
     Display descriptions of each column in the dataset
     """
-    descriptions = get_column_descriptions()
+    # Column descriptions directly defined here
+    descriptions = {
+        'Car_Name': 'Name/model of the car',
+        'Year': 'Year of manufacture',
+        'Selling_Price': 'Price at which the car is being sold (in lakhs INR)',
+        'Present_Price': 'Current market price of the car when new (in lakhs INR)',
+        'Driven_kms': 'Total kilometers the car has been driven',
+        'Fuel_Type': 'Type of fuel the car uses (e.g., Petrol, Diesel, CNG)',
+        'Selling_type': 'Who is selling the car — Dealer or Individual',
+        'Transmission': 'Type of transmission — Manual or Automatic',
+        'Owner': 'Number of previous owners before the current seller (0 = first-hand)',
+        'Car_Age': 'Age of the car calculated as (Current Year - Year of Manufacture)'
+    }
     
     st.subheader("Dataset Column Descriptions")
     

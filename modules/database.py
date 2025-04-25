@@ -13,7 +13,14 @@ def get_connection():
         connection: PostgreSQL database connection
     """
     try:
-        # Get database connection parameters from environment variables
+        # Try to connect using DATABASE_URL first
+        database_url = os.environ.get('DATABASE_URL')
+        if database_url:
+            conn = psycopg2.connect(database_url)
+            conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            return conn
+        
+        # Fallback to individual connection parameters if DATABASE_URL is not available
         conn = psycopg2.connect(
             host=os.environ.get('PGHOST'),
             database=os.environ.get('PGDATABASE'),
